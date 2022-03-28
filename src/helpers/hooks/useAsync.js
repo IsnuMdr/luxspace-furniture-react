@@ -1,4 +1,5 @@
 import { useCallback, useReducer, useRef } from "react";
+
 import useSafeDispatch from "./useSafeDispatch";
 
 const defaultState = {
@@ -8,14 +9,14 @@ const defaultState = {
 };
 
 export default function useAsync(initialState) {
-  const intialStateRef = useRef({
+  const initialStateRef = useRef({
     ...defaultState,
     ...initialState,
   });
 
   const [{ data, status, error }, setState] = useReducer((state, action) => {
     return { ...state, ...action };
-  }, intialStateRef.current);
+  }, initialStateRef.current);
 
   const safeSetState = useSafeDispatch(setState);
 
@@ -23,12 +24,14 @@ export default function useAsync(initialState) {
     (promise) => {
       if (!promise || !promise.then)
         throw new Error(
-          "The argument passed to useAsync().run must be a promise"
+          `The argument passed to useAsync().run must be a promise`
         );
       safeSetState({ status: "pending" });
       return promise.then(
         (data) => {
           safeSetState({ data, status: "resolved" });
+
+          return data;
         },
         (error) => {
           safeSetState({
@@ -56,7 +59,7 @@ export default function useAsync(initialState) {
   );
 
   const reset = useCallback(() => {
-    safeSetState(intialStateRef.current);
+    safeSetState(initialStateRef.current);
   }, [safeSetState]);
 
   return {
@@ -65,6 +68,7 @@ export default function useAsync(initialState) {
     error,
     run,
     setData,
+    setError,
     reset,
     isIdle: status === "idle",
     isLoading: status === "idle" || status === "pending",
