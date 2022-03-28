@@ -4,10 +4,11 @@ import BreadCrumb from "components/BreadCrumb";
 import Footer from "partials/Footer";
 import ShoppingCart from "partials/Cart/ShoppingCart";
 import ShippingDetails from "partials/Cart/ShippingDetails";
+import Documents from "partials/Documents";
 
 export default function Cart() {
   return (
-    <>
+    <Documents>
       <Header theme="black" />
       <BreadCrumb
         list={[
@@ -24,6 +25,6 @@ export default function Cart() {
         </div>
       </section>
       <Footer />
-    </>
+    </Documents>
   );
 }

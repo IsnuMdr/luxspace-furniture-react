@@ -5,7 +5,7 @@ import { ReactComponent as IconCart } from "../assets/images/content/icon-cart.s
 
 export default function Header({ theme, position }) {
   const [toggleMainMenu, setToggleMainMenu] = useState(false);
-  const [isCartChanged, setIsCartChanged] = useState(false);
+  const [isCartChanged, setCartChanged] = useState(false);
   const { state } = useGlobalContext();
 
   const prevCart = useRef(state?.cart || {});
@@ -13,15 +13,15 @@ export default function Header({ theme, position }) {
   useLayoutEffect(() => {
     if (prevCart.current !== state.cart) {
       prevCart.current = state?.cart || {};
-      setIsCartChanged(true);
+      setCartChanged(true);
       setTimeout(() => {
-        setIsCartChanged(false);
+        setCartChanged(false);
       }, 550);
     }
   }, [state.cart]);
 
   return (
-    <header className={[position, "w-full z-20 px-4"].join(" ")}>
+    <header className={[position, "w-full z-40 px-4"].join(" ")}>
       <div className="container mx-auto py-5">
         <div className="flex flex-stretch items-center">
           <div className="w-56 items-center flex">
@@ -32,11 +32,15 @@ export default function Header({ theme, position }) {
               />
             </Link>
           </div>
-          <div className="w-full" />
+          <div className="w-full"></div>
           <div className="w-auto">
             <ul
-              className="fixed bg-white inset-0 flex flex-col invisible items-center justify-center opacity-0 md:visible md:flex-row md:bg-transparent md:relative md:opacity-100 md:flex md:items-center"
-              id="menu"
+              className={[
+                "fixed bg-white inset-0 flex flex-col items-center justify-center md:visible md:flex-row md:bg-transparent md:relative md:opacity-100 md:flex md:items-center",
+                toggleMainMenu
+                  ? "opacity-100 z-30 visible"
+                  : "invisible opacity-0",
+              ].join(" ")}
             >
               <li className="mx-3 py-6 md:py-0">
                 <Link
@@ -45,7 +49,7 @@ export default function Header({ theme, position }) {
                     "hover:underline",
                     theme === "white"
                       ? "text-black md:text-white"
-                      : "text-white md:text-black",
+                      : "text-black md:text-black",
                   ].join(" ")}
                 >
                   Showcase
@@ -53,11 +57,11 @@ export default function Header({ theme, position }) {
               </li>
               <li className="mx-3 py-6 md:py-0">
                 <Link
-                  to="/Catalog"
+                  to="/catalog"
                   className={[
                     "hover:underline",
                     theme === "white"
-                      ? "text-black md:text-white"
+                      ? "text-black md:text-white "
                       : "text-white md:text-black",
                   ].join(" ")}
                 >
@@ -66,11 +70,11 @@ export default function Header({ theme, position }) {
               </li>
               <li className="mx-3 py-6 md:py-0">
                 <Link
-                  to="/Delivery"
+                  to="/delivery"
                   className={[
                     "hover:underline",
                     theme === "white"
-                      ? "text-black md:text-white"
+                      ? "text-black md:text-white "
                       : "text-white md:text-black",
                   ].join(" ")}
                 >
@@ -79,11 +83,11 @@ export default function Header({ theme, position }) {
               </li>
               <li className="mx-3 py-6 md:py-0">
                 <Link
-                  to="/Rewards"
+                  to="/rewards"
                   className={[
                     "hover:underline",
                     theme === "white"
-                      ? "text-black md:text-white"
+                      ? "text-black md:text-white "
                       : "text-white md:text-black",
                   ].join(" ")}
                 >
@@ -96,13 +100,19 @@ export default function Header({ theme, position }) {
             <ul className="items-center flex">
               <li className="ml-6 block md:hidden">
                 <button
-                  id="menu-toggler"
-                  className="relative flex z-50 items-center justify-center w-8 h-8 text-black md:text-white focus:outline-none"
+                  className={[
+                    "flex z-50 items-center justify-center w-8 h-8 text-black md:text-white focus:outline-none",
+                    toggleMainMenu ? "fixed top-0 right-0" : "relative",
+                    theme === "white"
+                      ? "text-black md:text-white"
+                      : "text-black md:text-black",
+                  ].join(" ")}
+                  onClick={() => setToggleMainMenu((prev) => !prev)}
                 >
                   <svg
                     className="fill-current"
-                    width={18}
-                    height={17}
+                    width="18"
+                    height="17"
                     viewBox="0 0 18 17"
                   >
                     <path d="M15.9773 0.461304H1.04219C0.466585 0.461304 0 0.790267 0 1.19609C0 1.60192 0.466668 1.93088 1.04219 1.93088H15.9773C16.5529 1.93088 17.0195 1.60192 17.0195 1.19609C17.0195 0.790208 16.5529 0.461304 15.9773 0.461304Z" />
@@ -113,17 +123,17 @@ export default function Header({ theme, position }) {
               </li>
               <li className="ml-6">
                 <Link
-                  to="/cart"
                   className={[
                     "cart flex items-center justify-center w-8 h-8",
                     theme === "white"
                       ? "text-black md:text-white"
-                      : "text-white md:text-black",
+                      : "text-black md:text-black",
                     state.cart && Object.keys(state.cart).length > 0
                       ? "cart-filled"
                       : "",
                     isCartChanged ? "animate-bounce" : "",
                   ].join(" ")}
+                  to="/cart"
                 >
                   <IconCart />
                 </Link>

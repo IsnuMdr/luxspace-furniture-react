@@ -8,6 +8,8 @@ import Suggestion from "partials/Details/Suggestion";
 import { useParams } from "react-router-dom";
 import fetch from "helpers/fetch";
 import useAsync from "helpers/hooks/useAsync";
+import Documents from "partials/Documents";
+import PageErrorMessage from "partials/PageErrorMessage";
 
 function LoadingSlider() {
   return (
@@ -100,14 +102,14 @@ function LoadingSuggestion() {
 
 export default function DetailsProduct() {
   const { idp } = useParams();
-  const { data, run, isLoading } = useAsync();
+  const { data, error, run, isLoading, isError } = useAsync();
 
   useEffect(() => {
     run(fetch({ url: `/api/products/${idp}` }));
   }, [run, idp]);
 
   return (
-    <>
+    <Documents>
       <Header theme="black" />
       <BreadCrumb
         list={[
@@ -116,14 +118,23 @@ export default function DetailsProduct() {
           { url: "/categories/91231/products/7888", name: "Details" },
         ]}
       />
-      {isLoading ? <LoadingSlider /> : <Product data={data} />}
-      {isLoading ? (
-        <LoadingSuggestion />
+      {isError ? (
+        <PageErrorMessage
+          title="Product Not Found"
+          body={error.errors.message}
+        />
       ) : (
-        <Suggestion data={data?.relatedProducts || {}} />
+        <>
+          {isLoading ? <LoadingSlider /> : <Product data={data} />}
+          {isLoading ? (
+            <LoadingSuggestion />
+          ) : (
+            <Suggestion data={data?.relatedProducts || {}} />
+          )}
+        </>
       )}
       <Sitemap />
       <Footer />
-    </>
+    </Documents>
   );
 }
